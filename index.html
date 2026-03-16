@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparação de Universidades Europeias — Rodrigo Antunes</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2rem; margin-bottom: 8px; }
+        .header p { opacity: 0.85; font-size: 1.05rem; }
+        .header .subtitle { font-size: 0.9rem; opacity: 0.65; margin-top: 4px; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* Version Toggle */
+        .version-toggle {
+            display: flex;
+            justify-content: center;
+            margin: -20px 0 10px;
+            position: relative;
+            z-index: 2;
+        }
+        .version-toggle .toggle-btn {
+            padding: 10px 24px;
+            border: 2px solid #0f3460;
+            background: white;
+            color: #0f3460;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .version-toggle .toggle-btn:first-child {
+            border-radius: 8px 0 0 8px;
+            border-right: 1px solid #0f3460;
+        }
+        .version-toggle .toggle-btn:last-child {
+            border-radius: 0 8px 8px 0;
+            border-left: 1px solid #0f3460;
+        }
+        .version-toggle .toggle-btn.active {
+            background: #0f3460;
+            color: white;
+        }
+        .version-toggle .toggle-btn:hover:not(.active) {
+            background: #eaf0fb;
+        }
+        .version-content { display: none; }
+        .version-content.active { display: block; }
+
+        .info-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin: -10px 0 30px;
+            position: relative;
+            z-index: 1;
+        }
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .info-card .label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .info-card .value { font-size: 1.3rem; font-weight: 700; color: #1a1a2e; margin-top: 4px; }
+
+        .new-badge-inline {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 6px;
+            vertical-align: middle;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 30px 0 16px;
+            color: #1a1a2e;
+            border-bottom: 3px solid #0f3460;
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+        .card.new-card {
+            border: 2px solid #27ae60;
+        }
+
+        .card-header {
+            padding: 18px 20px;
+            color: white;
+            position: relative;
+        }
+        .card-header h3 { font-size: 1.15rem; margin-bottom: 2px; }
+        .card-header .uni-name { font-size: 0.85rem; opacity: 0.9; }
+
+        .card-header.kth { background: linear-gradient(135deg, #1954a6, #2e86de); }
+        .card-header.tue { background: linear-gradient(135deg, #c4281c, #e74c3c); }
+        .card-header.groningen { background: linear-gradient(135deg, #d4451a, #e67e22); }
+        .card-header.vu { background: linear-gradient(135deg, #003366, #2980b9); }
+        .card-header.radboud { background: linear-gradient(135deg, #b71c1c, #e53935); }
+        .card-header.uva { background: linear-gradient(135deg, #1a1a2e, #2c3e50); }
+
+        .badge {
+            position: absolute;
+            top: 14px; right: 14px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-open { background: #27ae60; color: white; }
+        .badge-closing { background: #f39c12; color: white; }
+        .badge-free { background: #8e44ad; color: white; }
+        .badge-new { background: #27ae60; color: white; }
+
+        .card-body { padding: 18px 20px; }
+        .card-body .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 7px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+        .card-body .row:last-child { border-bottom: none; }
+        .card-body .row .lbl { color: #888; font-weight: 500; }
+        .card-body .row .val { font-weight: 600; text-align: right; max-width: 55%; }
+
+        .card-body .link-row {
+            margin-top: 12px;
+            text-align: center;
+        }
+        .card-body .link-row a {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .link-kth a { background: #eaf0fb; color: #1954a6; }
+        .link-kth a:hover { background: #1954a6; color: white; }
+        .link-tue a { background: #fce8e6; color: #c4281c; }
+        .link-tue a:hover { background: #c4281c; color: white; }
+        .link-groningen a { background: #fdf0e9; color: #d4451a; }
+        .link-groningen a:hover { background: #d4451a; color: white; }
+        .link-vu a { background: #e6eef5; color: #003366; }
+        .link-vu a:hover { background: #003366; color: white; }
+        .link-radboud a { background: #fce4e4; color: #b71c1c; }
+        .link-radboud a:hover { background: #b71c1c; color: white; }
+
+        .warning-note {
+            background: #fff3cd;
+            border-left: 4px solid #f39c12;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            color: #856404;
+        }
+
+        /* Excluded universities */
+        .excluded-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .excluded-item {
+            background: white;
+            border-radius: 10px;
+            padding: 14px 18px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .excluded-item .icon {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .icon-lang { background: #fce4ec; color: #c62828; }
+        .icon-deadline { background: #fff3e0; color: #e65100; }
+        .icon-none { background: #e8eaf6; color: #283593; }
+        .excluded-item .exc-info h4 { font-size: 0.9rem; color: #333; }
+        .excluded-item .exc-info p { font-size: 0.78rem; color: #888; }
+
+        /* Summary table */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        }
+        .summary-table th {
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .summary-table td {
+            padding: 11px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.88rem;
+        }
+        .summary-table tr:last-child td { border-bottom: none; }
+        .summary-table tr:hover { background: #f8f9ff; }
+        .summary-table .highlight { font-weight: 700; color: #0f3460; }
+
+        /* Notes */
+        .notes {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            margin-bottom: 30px;
+        }
+        .notes h3 { color: #1a1a2e; margin-bottom: 12px; font-size: 1.1rem; }
+        .notes ul { padding-left: 20px; }
+        .notes li { margin-bottom: 8px; font-size: 0.9rem; color: #555; }
+        .notes li strong { color: #333; }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 700px) {
+            .header h1 { font-size: 1.4rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .excluded-grid { grid-template-columns: 1fr; }
+            .summary-table { font-size: 0.8rem; }
+            .summary-table th, .summary-table td { padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🎓 Universidades Europeias — BSc Computer Science / AI / Data Science</h1>
+    <p>Rodrigo Antunes · 12.º ano · Científico-Natural · Portugal</p>
+    <p class="subtitle">Programas em Inglês · Excluindo Reino Unido · Candidaturas abertas após 16 Março 2026</p>
+</div>
+
+<div class="container">
+
+    <!-- Version Toggle -->
+    <div class="version-toggle">
+        <button class="toggle-btn active" onclick="switchVersion('v2')">🔄 Versão Atualizada (v2)</button>
+        <button class="toggle-btn" onclick="switchVersion('v1')">📋 Versão Original (v1)</button>
+    </div>
+
+    <!-- ==================== VERSION 2 (UPDATED) ==================== -->
+    <div id="version-v2" class="version-content active">
+
+    <!-- Info Bar V2 -->
+    <div class="info-bar">
+        <div class="info-card">
+            <div class="label">Programas Elegíveis</div>
+            <div class="value">9</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Universidades</div>
+            <div class="value">6</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Países</div>
+            <div class="value">🇸🇪 🇳🇱</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Propinas EU (anual)</div>
+            <div class="value">€0 – €2.695</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Excluídas</div>
+            <div class="value">10</div>
+        </div>
+    </div>
+
+    <!-- Summary Table V2 -->
+    <h2>📊 Tabela Resumo</h2>
+    <table class="summary-table">
+        <thead>
+            <tr>
+                <th>Universidade</th>
+                <th>Programa</th>
+                <th>País</th>
+                <th>QS 2026</th>
+                <th>Propinas EU/ano</th>
+                <th>Deadline</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="highlight">KTH Royal Institute of Technology</td>
+                <td>BSc Information and Communication Technology</td>
+                <td>🇸🇪 Suécia</td>
+                <td>~73</td>
+                <td class="highlight">Gratuito</td>
+                <td>~15 Abril 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">TU Eindhoven</td>
+                <td>BSc Data Science <span class="new-badge-inline">Novo</span></td>
+                <td>🇳🇱 Holanda</td>
+                <td>~124</td>
+                <td>€2.694</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">Univ. of Groningen</td>
+                <td>BSc Computing Science</td>
+                <td>🇳🇱 Holanda</td>
+                <td>~139</td>
+                <td>€2.695</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">VU Amsterdam</td>
+                <td>BSc Computer Science</td>
+                <td>🇳🇱 Holanda</td>
+                <td>~207</td>
+                <td>€2.695</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">VU Amsterdam</td>
+                <td>BSc Artificial Intelligence</td>
+                <td>🇳🇱 Holanda</td>
+                <td>~207</td>
+                <td>€2.695</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">Radboud University</td>
+                <td>BSc Computing Science</td>
+                <td>🇳🇱 Holanda</td>
+                <td>~222</td>
+                <td>€2.694</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">Radboud University</td>
+                <td>BSc Artificial Intelligence</td>
+                <td>🇳🇱 Holanda</td>
+                <td>~222</td>
+                <td>€2.694</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">UvA Amsterdam</td>
+                <td>BSc Business Analytics <span class="new-badge-inline">Novo</span></td>
+                <td>🇳🇱 Holanda</td>
+                <td>~53</td>
+                <td>€2.530</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">UvA Amsterdam</td>
+                <td>BSc Econometrics and Data Science <span class="new-badge-inline">Novo</span></td>
+                <td>🇳🇱 Holanda</td>
+                <td>~53</td>
+                <td>€2.530</td>
+                <td>1 Maio 2026</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Programme Cards -->
+    <h2>🏫 Programas Elegíveis</h2>
+    <div class="cards-grid">
+
+        <!-- KTH ICT -->
+        <div class="card">
+            <div class="card-header kth">
+                <span class="badge badge-free">Gratuito EU</span>
+                <h3>BSc Information and Communication Technology</h3>
+                <div class="uni-name">KTH Royal Institute of Technology · Estocolmo, Suécia</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~73</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU/EEA</span><span class="val">Gratuito</span></div>
+                <div class="row"><span class="lbl">Propinas não-EU</span><span class="val">~SEK 155.000/ano</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">universityadmissions.se</span></div>
+                <div class="row"><span class="lbl">Deadline (EU Ronda 2)</span><span class="val">~15 Abril 2026</span></div>
+                <div class="row"><span class="lbl">Nota</span><span class="val">Único BSc em Inglês na KTH</span></div>
+                <div class="link-row link-kth">
+                    <a href="https://www.kth.se/en/studies/bachelor/information-and-communication-technology" target="_blank">🔗 Ver programa na KTH</a>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Groningen CS -->
+        <div class="card">
+            <div class="card-header groningen">
+                <span class="badge badge-open">Aberto</span>
+                <h3>BSc Computing Science</h3>
+                <div class="uni-name">University of Groningen · Groningen, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~139</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.695</span></div>
+                <div class="row"><span class="lbl">Propinas não-EU</span><span class="val">€11.500</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Science and Engineering</span></div>
+                <div class="link-row link-groningen">
+                    <a href="https://www.rug.nl/bachelors/computing-science/" target="_blank">🔗 Ver programa em Groningen</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- VU Amsterdam CS -->
+        <div class="card">
+            <div class="card-header vu">
+                <span class="badge badge-open">Aberto</span>
+                <h3>BSc Computer Science</h3>
+                <div class="uni-name">Vrije Universiteit Amsterdam · Amesterdão, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~207</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.695</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Faculty of Science</span></div>
+                <div class="link-row link-vu">
+                    <a href="https://vu.nl/en/education/bachelor/computer-science" target="_blank">🔗 Ver programa na VU</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- VU Amsterdam AI -->
+        <div class="card">
+            <div class="card-header vu">
+                <span class="badge badge-open">Aberto</span>
+                <h3>BSc Artificial Intelligence</h3>
+                <div class="uni-name">Vrije Universiteit Amsterdam · Amesterdão, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~207</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.695</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Faculty of Science</span></div>
+                <div class="link-row link-vu">
+                    <a href="https://vu.nl/en/education/bachelor/artificial-intelligence" target="_blank">🔗 Ver programa na VU</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Radboud CS -->
+        <div class="card">
+            <div class="card-header radboud">
+                <span class="badge badge-open">Aberto</span>
+                <h3>BSc Computing Science</h3>
+                <div class="uni-name">Radboud University · Nijmegen, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~222</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.694</span></div>
+                <div class="row"><span class="lbl">Propinas não-EU (EEA)</span><span class="val">€13.020</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Faculty of Science</span></div>
+                <div class="link-row link-radboud">
+                    <a href="https://www.ru.nl/en/education/bachelors/computing-science" target="_blank">🔗 Ver programa em Radboud</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Radboud AI -->
+        <div class="card">
+            <div class="card-header radboud">
+                <span class="badge badge-open">Aberto</span>
+                <h3>BSc Artificial Intelligence</h3>
+                <div class="uni-name">Radboud University · Nijmegen, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~222</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.694</span></div>
+                <div class="row"><span class="lbl">Propinas não-EU (EEA)</span><span class="val">€13.020</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Faculty of Social Sciences</span></div>
+                <div class="row"><span class="lbl">Nota</span><span class="val">Interdisciplinar: cognição, neurociência, linguística + CS</span></div>
+                <div class="link-row link-radboud">
+                    <a href="https://www.ru.nl/en/education/bachelors/artificial-intelligence" target="_blank">🔗 Ver programa em Radboud</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: TU Eindhoven Data Science -->
+        <div class="card new-card">
+            <div class="card-header tue">
+                <span class="badge badge-new">Novo</span>
+                <h3>BSc Data Science</h3>
+                <div class="uni-name">TU Eindhoven + Tilburg University · Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~124</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.694</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Seleção</span><span class="val">Sem numerus fixus</span></div>
+                <div class="row"><span class="lbl">Nota</span><span class="val">Programa conjunto TU/e + Tilburg. Foco em IA, ML, programação, análise de dados.</span></div>
+                <div class="warning-note">⚠️ O BSc CSE (Computer Science and Engineering) da TU/e está encerrado. Este BSc Data Science é um programa diferente, sem numerus fixus, e ainda aceita candidaturas.</div>
+                <div class="link-row link-tue">
+                    <a href="https://www.tue.nl/en/education/bachelor-college/bachelor-data-science" target="_blank">🔗 Ver programa na TU/e</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: UvA Business Analytics -->
+        <div class="card new-card">
+            <div class="card-header uva">
+                <span class="badge badge-new">Novo</span>
+                <h3>BSc Business Analytics</h3>
+                <div class="uni-name">Universiteit van Amsterdam (UvA) · Amesterdão, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~53</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.530</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline (EU)</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Faculty of Science</span></div>
+                <div class="row"><span class="lbl">Nota</span><span class="val">IA, Machine Learning, programação, análise de dados. Forte componente de CS e matemática aplicada.</span></div>
+                <div class="warning-note">⚠️ O BSc Computer Science e BSc AI da UvA são em holandês. Este BSc Business Analytics é diferente — lecionado 100% em inglês, com forte foco em programação, ML e data science.</div>
+                <div class="link-row" style="margin-top:12px;text-align:center;">
+                    <a href="https://www.uva.nl/en/programmes/bachelors/business-analytics/business-analytics.html" target="_blank" style="display:inline-block;padding:8px 20px;border-radius:8px;font-size:0.85rem;font-weight:600;text-decoration:none;background:#e8eaf6;color:#1a1a2e;transition:background 0.2s;">🔗 Ver programa na UvA</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: UvA Econometrics and Data Science -->
+        <div class="card new-card">
+            <div class="card-header uva">
+                <span class="badge badge-new">Novo</span>
+                <h3>BSc Econometrics and Data Science</h3>
+                <div class="uni-name">Universiteit van Amsterdam (UvA) · Amesterdão, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~53</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.530</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline (EU)</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Faculty of Economics and Business</span></div>
+                <div class="row"><span class="lbl">Nota</span><span class="val">Modelos matemáticos e estatísticos, Data Science, programação. Forte base quantitativa.</span></div>
+                <div class="link-row" style="margin-top:12px;text-align:center;">
+                    <a href="https://www.uva.nl/en/programmes/bachelors/econometrics-and-data-science/econometrics-and-data-science.html" target="_blank" style="display:inline-block;padding:8px 20px;border-radius:8px;font-size:0.85rem;font-weight:600;text-decoration:none;background:#e8eaf6;color:#1a1a2e;transition:background 0.2s;">🔗 Ver programa na UvA</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recommendations V2 -->
+    <div class="notes">
+        <h3>💡 Recomendações</h3>
+        <ul>
+            <li><strong>Melhor relação qualidade/preço:</strong> KTH (Suécia) — propinas gratuitas para EU/EEA, ranking QS ~73, programa forte em ICT.</li>
+            <li><strong>Melhores opções CS/AI na Holanda:</strong> Groningen (QS ~139) para CS puro; VU Amsterdam e Radboud oferecem tanto CS como AI separados.</li>
+            <li><strong>🆕 TU Eindhoven — BSc Data Science:</strong> Embora o BSc CSE esteja encerrado, o BSc Data Science (conjunto com Tilburg University) <strong>não tem numerus fixus</strong> e aceita candidaturas até 1 Maio 2026. Foco em IA, ML e programação — excelente opção.</li>
+            <li><strong>🆕 UvA Amsterdam:</strong> O BSc CS e AI são em holandês, mas o <strong>BSc Business Analytics</strong> e o <strong>BSc Econometrics and Data Science</strong> são 100% em inglês. A UvA tem QS ~53 (a melhor universidade holandesa nesta lista). Deadline EU: 1 Maio 2026.</li>
+            <li><strong>Custo de vida estimado:</strong> Holanda ~€800-1.200/mês; Estocolmo ~€900-1.300/mês.</li>
+            <li><strong>Candidaturas na Holanda:</strong> Todas via <a href="https://www.studielink.nl/" target="_blank">Studielink</a>. É possível candidatar-se a múltiplos programas simultaneamente.</li>
+            <li><strong>Candidatura na Suécia:</strong> Via <a href="https://www.universityadmissions.se/" target="_blank">universityadmissions.se</a>. A Ronda 2 para EU abre em meados de Março.</li>
+        </ul>
+    </div>
+
+    <!-- Excluded Universities V2 -->
+    <h2>❌ Universidades Excluídas (CS/AI/Data Science)</h2>
+    <div class="excluded-grid">
+        <div class="excluded-item">
+            <div class="icon icon-lang">🇩🇪</div>
+            <div class="exc-info">
+                <h4>ETH Zurich (QS ~7)</h4>
+                <p>Todos os BSc em Alemão — sem opções em inglês</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-lang">🇨🇭</div>
+            <div class="exc-info">
+                <h4>EPFL (QS ~18)</h4>
+                <p>Todos os BSc em Francês — sem opções em inglês</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-lang">🇩🇪</div>
+            <div class="exc-info">
+                <h4>TU Munich (QS ~28)</h4>
+                <p>BSc Aerospace é em inglês mas exige alemão. Sem BSc CS/AI apenas em inglês</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-deadline">🇳🇱</div>
+            <div class="exc-info">
+                <h4>TU Delft (QS ~47)</h4>
+                <p>Deadline encerrada: 15 Janeiro 2026</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-deadline">🇳🇱</div>
+            <div class="exc-info">
+                <h4>TU Eindhoven — BSc CSE (QS ~124)</h4>
+                <p>BSc Computer Science and Engineering: seleção encerrada (numerus fixus, 375 vagas). O BSc Data Science está elegível ↑</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-lang">🇳🇱</div>
+            <div class="exc-info">
+                <h4>UvA Amsterdam — BSc CS e AI (QS ~53)</h4>
+                <p>BSc CS e AI em Holandês. Business Analytics e Econometrics & DS estão elegíveis ↑</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-deadline">🇫🇮</div>
+            <div class="exc-info">
+                <h4>Aalto University (QS ~109)</h4>
+                <p>Deadline encerrada: 22 Janeiro 2026</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-lang">🇮🇹</div>
+            <div class="exc-info">
+                <h4>Politecnico di Milano (QS ~111)</h4>
+                <p>BSc CS/AI em Italiano. BSc Engineering Science (novo, inglês) é de engenharia geral, não CS puro</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-none">🇫🇮</div>
+            <div class="exc-info">
+                <h4>University of Helsinki</h4>
+                <p>Sem BSc em Inglês na área de CS/AI/DS</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-none">🇩🇰</div>
+            <div class="exc-info">
+                <h4>DTU (Technical Univ. of Denmark)</h4>
+                <p>Sem BSc em Inglês na área de CS/AI/DS</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes V2 -->
+    <div class="notes">
+        <h3>📝 Notas Importantes</h3>
+        <ul>
+            <li>Como cidadão <strong>português (EU/EEA)</strong>, o Rodrigo paga as propinas estatutárias (~€2.530-2.695/ano na Holanda, gratuito na Suécia).</li>
+            <li>Rankings QS são aproximados (QS World University Rankings 2026). As posições podem variar ligeiramente por área.</li>
+            <li>Todos os programas listados são <strong>lecionados 100% em Inglês</strong>.</li>
+            <li>Será necessário comprovar proficiência em Inglês (IELTS, TOEFL, Cambridge, etc.) — verifica os requisitos de cada universidade.</li>
+            <li>Diploma português do 12.º ano (científico-natural) é geralmente aceite — verifica equivalências específicas.</li>
+            <li>Algumas universidades podem exigir Matemática específica — confirma os requisitos de admissão.</li>
+            <li><strong>🆕 BSc Data Science (TU/e):</strong> Programa conjunto com Tilburg University — aulas divididas entre os dois campi (custo de transporte ~€1.200/ano).</li>
+            <li><strong>🆕 UvA Business Analytics:</strong> Apesar do nome "Business", este programa é fortemente técnico — programação, IA, Machine Learning, análise de dados. Não é um curso de gestão.</li>
+        </ul>
+    </div>
+
+    </div><!-- /version-v2 -->
+
+    <!-- ==================== VERSION 1 (ORIGINAL) ==================== -->
+    <div id="version-v1" class="version-content">
+
+    <!-- Info Bar V1 -->
+    <div class="info-bar">
+        <div class="info-card">
+            <div class="label">Programas Elegíveis</div>
+            <div class="value">6</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Universidades</div>
+            <div class="value">4</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Países</div>
+            <div class="value">🇸🇪 🇳🇱</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Propinas EU (anual)</div>
+            <div class="value">€0 – €2.695</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Excluídas</div>
+            <div class="value">10</div>
+        </div>
+    </div>
+
+    <!-- Summary Table V1 -->
+    <h2>📊 Tabela Resumo</h2>
+    <table class="summary-table">
+        <thead>
+            <tr>
+                <th>Universidade</th>
+                <th>Programa</th>
+                <th>País</th>
+                <th>QS 2026</th>
+                <th>Propinas EU/ano</th>
+                <th>Deadline</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="highlight">KTH Royal Institute of Technology</td>
+                <td>BSc Information and Communication Technology</td>
+                <td>🇸🇪 Suécia</td>
+                <td>~73</td>
+                <td class="highlight">Gratuito</td>
+                <td>~15 Abril 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">Univ. of Groningen</td>
+                <td>BSc Computing Science</td>
+                <td>🇳🇱 Holanda</td>
+                <td>~139</td>
+                <td>€2.695</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">VU Amsterdam</td>
+                <td>BSc Computer Science</td>
+                <td>🇳🇱 Holanda</td>
+                <td>~207</td>
+                <td>€2.695</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">VU Amsterdam</td>
+                <td>BSc Artificial Intelligence</td>
+                <td>🇳🇱 Holanda</td>
+                <td>~207</td>
+                <td>€2.695</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">Radboud University</td>
+                <td>BSc Computing Science</td>
+                <td>🇳🇱 Holanda</td>
+                <td>~222</td>
+                <td>€2.694</td>
+                <td>1 Maio 2026</td>
+            </tr>
+            <tr>
+                <td class="highlight">Radboud University</td>
+                <td>BSc Artificial Intelligence</td>
+                <td>🇳🇱 Holanda</td>
+                <td>~222</td>
+                <td>€2.694</td>
+                <td>1 Maio 2026</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Programme Cards V1 -->
+    <h2>🏫 Programas Elegíveis</h2>
+    <div class="cards-grid">
+
+        <!-- KTH ICT (V1) -->
+        <div class="card">
+            <div class="card-header kth">
+                <span class="badge badge-free">Gratuito EU</span>
+                <h3>BSc Information and Communication Technology</h3>
+                <div class="uni-name">KTH Royal Institute of Technology · Estocolmo, Suécia</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~73</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU/EEA</span><span class="val">Gratuito</span></div>
+                <div class="row"><span class="lbl">Propinas não-EU</span><span class="val">~SEK 155.000/ano</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">universityadmissions.se</span></div>
+                <div class="row"><span class="lbl">Deadline (EU Ronda 2)</span><span class="val">~15 Abril 2026</span></div>
+                <div class="row"><span class="lbl">Nota</span><span class="val">Único BSc em Inglês na KTH</span></div>
+                <div class="link-row link-kth">
+                    <a href="https://www.kth.se/en/studies/bachelor/information-and-communication-technology" target="_blank">🔗 Ver programa na KTH</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Groningen CS (V1) -->
+        <div class="card">
+            <div class="card-header groningen">
+                <span class="badge badge-open">Aberto</span>
+                <h3>BSc Computing Science</h3>
+                <div class="uni-name">University of Groningen · Groningen, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~139</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.695</span></div>
+                <div class="row"><span class="lbl">Propinas não-EU</span><span class="val">€11.500</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Science and Engineering</span></div>
+                <div class="link-row link-groningen">
+                    <a href="https://www.rug.nl/bachelors/computing-science/" target="_blank">🔗 Ver programa em Groningen</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- VU CS (V1) -->
+        <div class="card">
+            <div class="card-header vu">
+                <span class="badge badge-open">Aberto</span>
+                <h3>BSc Computer Science</h3>
+                <div class="uni-name">Vrije Universiteit Amsterdam · Amesterdão, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~207</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.695</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Faculty of Science</span></div>
+                <div class="link-row link-vu">
+                    <a href="https://vu.nl/en/education/bachelor/computer-science" target="_blank">🔗 Ver programa na VU</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- VU AI (V1) -->
+        <div class="card">
+            <div class="card-header vu">
+                <span class="badge badge-open">Aberto</span>
+                <h3>BSc Artificial Intelligence</h3>
+                <div class="uni-name">Vrije Universiteit Amsterdam · Amesterdão, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~207</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.695</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Faculty of Science</span></div>
+                <div class="link-row link-vu">
+                    <a href="https://vu.nl/en/education/bachelor/artificial-intelligence" target="_blank">🔗 Ver programa na VU</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Radboud CS (V1) -->
+        <div class="card">
+            <div class="card-header radboud">
+                <span class="badge badge-open">Aberto</span>
+                <h3>BSc Computing Science</h3>
+                <div class="uni-name">Radboud University · Nijmegen, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~222</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.694</span></div>
+                <div class="row"><span class="lbl">Propinas não-EU (EEA)</span><span class="val">€13.020</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Faculty of Science</span></div>
+                <div class="link-row link-radboud">
+                    <a href="https://www.ru.nl/en/education/bachelors/computing-science" target="_blank">🔗 Ver programa em Radboud</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Radboud AI (V1) -->
+        <div class="card">
+            <div class="card-header radboud">
+                <span class="badge badge-open">Aberto</span>
+                <h3>BSc Artificial Intelligence</h3>
+                <div class="uni-name">Radboud University · Nijmegen, Holanda</div>
+            </div>
+            <div class="card-body">
+                <div class="row"><span class="lbl">QS Ranking 2026</span><span class="val">~222</span></div>
+                <div class="row"><span class="lbl">Duração</span><span class="val">3 anos (180 ECTS)</span></div>
+                <div class="row"><span class="lbl">Língua</span><span class="val">100% Inglês</span></div>
+                <div class="row"><span class="lbl">Propinas EU (estatutárias)</span><span class="val">€2.694</span></div>
+                <div class="row"><span class="lbl">Propinas não-EU (EEA)</span><span class="val">€13.020</span></div>
+                <div class="row"><span class="lbl">Candidatura</span><span class="val">Studielink</span></div>
+                <div class="row"><span class="lbl">Deadline</span><span class="val">1 Maio 2026</span></div>
+                <div class="row"><span class="lbl">Faculdade</span><span class="val">Faculty of Social Sciences</span></div>
+                <div class="row"><span class="lbl">Nota</span><span class="val">Interdisciplinar: cognição, neurociência, linguística + CS</span></div>
+                <div class="link-row link-radboud">
+                    <a href="https://www.ru.nl/en/education/bachelors/artificial-intelligence" target="_blank">🔗 Ver programa em Radboud</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recommendations V1 -->
+    <div class="notes">
+        <h3>💡 Recomendações</h3>
+        <ul>
+            <li><strong>Melhor relação qualidade/preço:</strong> KTH (Suécia) — propinas gratuitas para EU/EEA, ranking QS ~73, programa forte em ICT.</li>
+            <li><strong>Melhores opções CS/AI na Holanda:</strong> Groningen (QS ~139) para CS puro; VU Amsterdam e Radboud oferecem tanto CS como AI separados.</li>
+            <li><strong>Custo de vida estimado:</strong> Holanda ~€800-1.200/mês; Estocolmo ~€900-1.300/mês.</li>
+            <li><strong>Candidaturas na Holanda:</strong> Todas via <a href="https://www.studielink.nl/" target="_blank">Studielink</a>. É possível candidatar-se a múltiplos programas simultaneamente.</li>
+            <li><strong>Candidatura na Suécia:</strong> Via <a href="https://www.universityadmissions.se/" target="_blank">universityadmissions.se</a>. A Ronda 2 para EU abre em meados de Março.</li>
+            <li><strong>TU Eindhoven (atualizado):</strong> Confirmado no site oficial — o processo de seleção para BSc Computer Science and Engineering 2026-2027 <strong>já encerrou</strong>. O programa tem numerus fixus (máx. 375 alunos) e já não aceita candidaturas. Propinas EU: €2.694/ano. Propinas não-EU: €18.600/ano.</li>
+        </ul>
+    </div>
+
+    <!-- Excluded Universities V1 -->
+    <h2>❌ Universidades Excluídas</h2>
+    <div class="excluded-grid">
+        <div class="excluded-item">
+            <div class="icon icon-lang">🇩🇪</div>
+            <div class="exc-info">
+                <h4>ETH Zurich (QS ~7)</h4>
+                <p>BSc em Alemão</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-lang">🇨🇭</div>
+            <div class="exc-info">
+                <h4>EPFL (QS ~18)</h4>
+                <p>BSc em Francês</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-lang">🇩🇪</div>
+            <div class="exc-info">
+                <h4>TU Munich (QS ~28)</h4>
+                <p>BSc em Alemão</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-deadline">🇳🇱</div>
+            <div class="exc-info">
+                <h4>TU Delft (QS ~47)</h4>
+                <p>Deadline encerrada: 15 Janeiro 2026</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-deadline">🇳🇱</div>
+            <div class="exc-info">
+                <h4>TU Eindhoven (QS ~124)</h4>
+                <p>Seleção encerrada para 2026-2027 (numerus fixus, 375 vagas). Propinas EU: €2.694/ano</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-lang">🇳🇱</div>
+            <div class="exc-info">
+                <h4>UvA Amsterdam (QS ~53)</h4>
+                <p>BSc CS e AI em Holandês</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-deadline">🇫🇮</div>
+            <div class="exc-info">
+                <h4>Aalto University (QS ~109)</h4>
+                <p>Deadline encerrada: 22 Janeiro 2026</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-lang">🇮🇹</div>
+            <div class="exc-info">
+                <h4>Politecnico di Milano (QS ~111)</h4>
+                <p>BSc em Italiano</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-none">🇫🇮</div>
+            <div class="exc-info">
+                <h4>University of Helsinki</h4>
+                <p>Sem BSc em Inglês na área</p>
+            </div>
+        </div>
+        <div class="excluded-item">
+            <div class="icon icon-none">🇩🇰</div>
+            <div class="exc-info">
+                <h4>DTU (Technical Univ. of Denmark)</h4>
+                <p>Sem BSc em Inglês na área</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes V1 -->
+    <div class="notes">
+        <h3>📝 Notas Importantes</h3>
+        <ul>
+            <li>Como cidadão <strong>português (EU/EEA)</strong>, o Rodrigo paga as propinas estatutárias (~€2.695/ano na Holanda, gratuito na Suécia).</li>
+            <li>Rankings QS são aproximados (QS World University Rankings 2026). As posições podem variar ligeiramente por área.</li>
+            <li>Todos os programas listados são <strong>lecionados 100% em Inglês</strong>.</li>
+            <li>Será necessário comprovar proficiência em Inglês (IELTS, TOEFL, Cambridge, etc.) — verifica os requisitos de cada universidade.</li>
+            <li>Diploma português do 12.º ano (científico-natural) é geralmente aceite — verifica equivalências específicas.</li>
+            <li>Algumas universidades podem exigir Matemática específica — confirma os requisitos de admissão.</li>
+        </ul>
+    </div>
+
+    </div><!-- /version-v1 -->
+
+</div>
+
+<div class="footer">
+    Última atualização: 16 Março 2026 · Dados recolhidos dos sites oficiais das universidades
+</div>
+
+<script>
+function switchVersion(version) {
+    document.querySelectorAll('.version-content').forEach(function(el) {
+        el.classList.remove('active');
+    });
+    document.querySelectorAll('.toggle-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+    });
+    document.getElementById('version-' + version).classList.add('active');
+    var buttons = document.querySelectorAll('.toggle-btn');
+    for (var i = 0; i < buttons.length; i++) {
+        if (buttons[i].getAttribute('onclick').indexOf(version) !== -1) {
+            buttons[i].classList.add('active');
+        }
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
