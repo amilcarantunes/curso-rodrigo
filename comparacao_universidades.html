@@ -46,6 +46,10 @@
             border-radius: 8px 0 0 8px;
             border-right: 1px solid #0f3460;
         }
+        .version-toggle .toggle-btn:not(:first-child):not(:last-child) {
+            border-left: 1px solid #0f3460;
+            border-right: 1px solid #0f3460;
+        }
         .version-toggle .toggle-btn:last-child {
             border-radius: 0 8px 8px 0;
             border-left: 1px solid #0f3460;
@@ -77,6 +81,156 @@
         }
         .info-card .label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
         .info-card .value { font-size: 1.3rem; font-weight: 700; color: #1a1a2e; margin-top: 4px; }
+
+        .docs-hero {
+            background: linear-gradient(135deg, #f8fbff 0%, #edf4ff 100%);
+            border: 1px solid #d8e5fb;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 26px;
+            box-shadow: 0 2px 12px rgba(15,52,96,0.08);
+        }
+        .docs-hero h2 {
+            margin-top: 0;
+        }
+        .docs-hero p {
+            margin: 10px 0;
+            color: #334;
+        }
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+            margin: 24px 0 30px;
+        }
+        .doc-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border-top: 5px solid #0f3460;
+        }
+        .doc-card.optional {
+            border-top-color: #95a5a6;
+        }
+        .doc-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+            color: #1a1a2e;
+        }
+        .doc-card ul {
+            margin-left: 18px;
+            color: #444;
+        }
+        .doc-card li {
+            margin-bottom: 8px;
+        }
+        .doc-badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .doc-badge.required {
+            background: #ffe8e8;
+            color: #b42318;
+        }
+        .doc-badge.optional {
+            background: #eef2f3;
+            color: #52606d;
+        }
+        .docs-steps {
+            background: white;
+            border-radius: 14px;
+            padding: 20px 22px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .docs-section {
+            margin-top: 26px;
+        }
+        .docs-checklist {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+            margin: 16px 0 28px;
+        }
+        .check-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border-left: 5px solid #f39c12;
+        }
+        .check-item.ready {
+            border-left-color: #27ae60;
+        }
+        .check-item.waiting {
+            border-left-color: #c0392b;
+        }
+        .check-state {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .check-state.pending {
+            background: #fff3cd;
+            color: #8a5b00;
+        }
+        .check-state.ready {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+        .check-state.waiting {
+            background: #fdecec;
+            color: #9f1c1c;
+        }
+        .check-item h4 {
+            font-size: 1rem;
+            margin-bottom: 6px;
+            color: #1a1a2e;
+        }
+        .template-box {
+            background: white;
+            border-radius: 14px;
+            padding: 20px 22px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-top: 16px;
+        }
+        .template-box h3 {
+            margin-bottom: 10px;
+            color: #1a1a2e;
+        }
+        .template-box p {
+            margin-bottom: 12px;
+            color: #444;
+        }
+        .template-box pre {
+            background: #f7f9fc;
+            border: 1px solid #dde7f5;
+            border-radius: 12px;
+            padding: 16px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #223;
+        }
+        .docs-steps ol {
+            margin-left: 20px;
+        }
+        .docs-steps li {
+            margin-bottom: 10px;
+        }
 
         .new-badge-inline {
             display: inline-block;
@@ -299,9 +453,221 @@
 
     <!-- Version Toggle -->
     <div class="version-toggle">
+        <button class="toggle-btn" onclick="switchVersion('docs')">📎 Documentos TU/e</button>
         <button class="toggle-btn active" onclick="switchVersion('v2')">🔄 Versão Atualizada (v2)</button>
         <button class="toggle-btn" onclick="switchVersion('v1')">📋 Versão Original (v1)</button>
     </div>
+
+    <!-- ==================== DOCUMENTS CHECKLIST ==================== -->
+    <div id="version-docs" class="version-content">
+
+    <div class="docs-hero">
+        <h2>📎 Documentos para carregar na candidatura TU/e</h2>
+        <p><strong>Objetivo:</strong> deixar tudo preparado durante o dia para submeter a candidatura ao BSc Data Science sem falhas.</p>
+        <p><strong>Prazo do formulário TU/e:</strong> 1 Maio 2026, 23:59 CET.</p>
+        <p><strong>Regras do portal:</strong> 1 ficheiro por item, apenas PDF, máximo 5 MB, nome do ficheiro em inglês, documentos legíveis e direitos.</p>
+    </div>
+
+    <div class="docs-grid">
+        <div class="doc-card">
+            <div class="doc-badge required">Obrigatório</div>
+            <h3>1. Proof of Enrollment</h3>
+            <ul>
+                <li>Como o Rodrigo ainda está no 12.º ano, este ficheiro substitui o diploma final.</li>
+                <li>Usar declaração da escola a confirmar matrícula/frequência no 12.º ano em 2025/2026.</li>
+                <li>Se estiver em português, juntar tradução autenticada para inglês.</li>
+                <li>Nome sugerido: Proof_of_Enrollment_Rodrigo_Antunes.pdf</li>
+            </ul>
+        </div>
+
+        <div class="doc-card">
+            <div class="doc-badge required">Obrigatório</div>
+            <h3>2. Grade List</h3>
+            <ul>
+                <li>Juntar notas oficiais do 10.º, 11.º e do 12.º ano mais recente disponível.</li>
+                <li>Idealmente, colocar tudo num único PDF.</li>
+                <li>Se os documentos estiverem em português, incluir tradução autenticada.</li>
+                <li>Nome sugerido: Grade_List_2023_2026_Rodrigo_Antunes.pdf</li>
+            </ul>
+        </div>
+
+        <div class="doc-card">
+            <div class="doc-badge required">Obrigatório</div>
+            <h3>3. English Language Test</h3>
+            <ul>
+                <li>Carregar o resultado do IELTS, TOEFL ou Cambridge indicado no formulário.</li>
+                <li>Se o teste foi Cambridge, guardar também o statement of results e o verification number.</li>
+                <li>Sem este documento, a candidatura pode ficar incompleta.</li>
+                <li>Nome sugerido: English_Test_Result_Rodrigo_Antunes.pdf</li>
+            </ul>
+        </div>
+
+        <div class="doc-card">
+            <div class="doc-badge required">Obrigatório</div>
+            <h3>4. CV / Resume</h3>
+            <ul>
+                <li>CV curto em inglês, 1 página chega.</li>
+                <li>Incluir escola atual, percurso académico, línguas, projetos, atividades e contacto.</li>
+                <li>Se houve intercâmbio, mencionar no CV.</li>
+                <li>Nome sugerido: CV_Rodrigo_Antunes.pdf</li>
+            </ul>
+        </div>
+
+        <div class="doc-card">
+            <div class="doc-badge required">Obrigatório</div>
+            <h3>5. ID Card / Passport</h3>
+            <ul>
+                <li>Como cidadão UE, pode usar Cartão de Cidadão ou passaporte.</li>
+                <li>Se usar CC, juntar frente e verso no mesmo PDF.</li>
+                <li>Verificar que os dados estão legíveis.</li>
+                <li>Nome sugerido: ID_Card_Rodrigo_Antunes.pdf</li>
+            </ul>
+        </div>
+
+        <div class="doc-card">
+            <div class="doc-badge required">Obrigatório</div>
+            <h3>6. Application Fee Proof</h3>
+            <ul>
+                <li>Pagar a taxa de candidatura de €100.</li>
+                <li>Guardar comprovativo da transferência com data, montante e referência à TU/e.</li>
+                <li>A TU/e só começa a processar a candidatura depois de verificar este pagamento.</li>
+                <li>Nome sugerido: Application_Fee_Proof_Rodrigo_Antunes.pdf</li>
+            </ul>
+        </div>
+
+        <div class="doc-card optional">
+            <div class="doc-badge optional">Opcional</div>
+            <h3>7. Additional Exams</h3>
+            <ul>
+                <li>Só carregar se o Rodrigo for fazer exames adicionais além do secundário normal.</li>
+                <li>Exemplos: A-levels, AP, VWO exams ou exames externos equivalentes.</li>
+                <li>Se não existir nada disto, deixar em branco.</li>
+            </ul>
+        </div>
+
+        <div class="doc-card optional">
+            <div class="doc-badge optional">Atenção</div>
+            <h3>8. Traduções e certificações</h3>
+            <ul>
+                <li>O portal menciona certified copies e authenticated translations.</li>
+                <li>Os documentos escolares em português podem precisar de tradução autenticada para inglês.</li>
+                <li>Convém guardar já versões digitais organizadas para evitar correria à noite.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="docs-steps">
+        <h3>Plano para hoje</h3>
+        <ol>
+            <li>Pedir ou localizar declaração da escola a confirmar frequência no 12.º ano.</li>
+            <li>Juntar notas do 10.º, 11.º e avaliação mais recente do 12.º.</li>
+            <li>Preparar o CV em inglês e exportar em PDF.</li>
+            <li>Digitalizar Cartão de Cidadão ou passaporte em boa qualidade.</li>
+            <li>Fazer a transferência dos €100 e guardar o comprovativo.</li>
+            <li>Verificar se já existe o teste de inglês em formato PDF.</li>
+            <li>À noite, abrir o portal TU/e e carregar tudo antes de submeter.</li>
+        </ol>
+    </div>
+
+    <div class="docs-section">
+        <h2>✅ Checklist de Estado</h2>
+        <div class="docs-checklist">
+            <div class="check-item waiting">
+                <div class="check-state waiting">Pedir à escola</div>
+                <h4>Proof of Enrollment</h4>
+                <p>Declaração oficial de frequência no 12.º ano, preferencialmente com carimbo e assinatura.</p>
+            </div>
+            <div class="check-item pending">
+                <div class="check-state pending">Preparar hoje</div>
+                <h4>Grade List</h4>
+                <p>Unir notas do 10.º, 11.º e do 12.º mais recente num único PDF.</p>
+            </div>
+            <div class="check-item pending">
+                <div class="check-state pending">Confirmar</div>
+                <h4>English Test</h4>
+                <p>Verificar se o resultado do IELTS, TOEFL ou Cambridge já está disponível em PDF.</p>
+            </div>
+            <div class="check-item pending">
+                <div class="check-state pending">Criar hoje</div>
+                <h4>CV em inglês</h4>
+                <p>Usar o modelo abaixo, exportar em PDF e rever ortografia antes do upload.</p>
+            </div>
+            <div class="check-item ready">
+                <div class="check-state ready">Fácil</div>
+                <h4>ID Card / Passport</h4>
+                <p>Digitalizar ou fotografar em boa qualidade; frente e verso no mesmo ficheiro se for CC.</p>
+            </div>
+            <div class="check-item pending">
+                <div class="check-state pending">Pagar hoje</div>
+                <h4>Application Fee</h4>
+                <p>Fazer a transferência dos €100 e guardar o comprovativo imediatamente em PDF.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="docs-section">
+        <h2>🧾 Modelo de CV</h2>
+        <div class="template-box">
+            <p>Copiar, adaptar e exportar para PDF. Um CV simples e curto é suficiente para esta candidatura.</p>
+<pre>Rodrigo Antunes
+Portugal | rrodrrigoantunesr@gmail.com | [phone number]
+
+PROFILE
+Portuguese secondary school student currently completing the 12th grade in the Science and Technology track. Interested in computer science, artificial intelligence, machine learning and data science.
+
+EDUCATION
+Escola Secundaria Francisco Lobo, Portugal
+Science and Technology Track
+Expected completion: July 2026
+
+Relevant subjects:
+- Mathematics
+- Physics and Chemistry
+- Biology and Geology / [adjust if needed]
+- English
+
+SKILLS
+- English: [level]
+- Portuguese: Native
+- Digital skills: Microsoft Office / Google Docs / [adjust]
+- Programming: [Python / Scratch / none yet - adjust honestly]
+
+PROJECTS AND ACTIVITIES
+- [Any coding project, school project, science fair, robotics, online course, Olympiad, volunteer work]
+- [Any extracurricular activity]
+
+ADDITIONAL INFORMATION
+- Interested in data science, AI and programming
+- Motivated to study in an international environment</pre>
+        </div>
+    </div>
+
+    <div class="docs-section">
+        <h2>🏫 Pedido à Escola</h2>
+        <div class="template-box">
+            <p>Este texto pode ser enviado por email ou usado presencialmente para pedir a declaração necessária.</p>
+<pre>Assunto: Pedido de declaracao de frequencia e registo de classificacoes
+
+Bom dia,
+
+Venho por este meio solicitar, com urgencia, os seguintes documentos em nome do aluno Rodrigo Antunes:
+
+1. Declaracao de frequencia comprovando que se encontra matriculado e a frequentar o 12.o ano no ano letivo 2025/2026;
+2. Registo oficial de classificacoes do 10.o e 11.o anos;
+3. Registo de classificacoes mais recente disponivel do 12.o ano.
+
+Os documentos destinam-se a uma candidatura internacional universitaria e, por isso, agradeco que sejam emitidos com carimbo e assinatura da escola.
+
+Caso seja possivel, agradeco tambem a emissao em formato digital PDF.
+
+Com os melhores cumprimentos,
+[Nome do encarregado de educacao]
+[Contacto telefonico]
+[Email]</pre>
+        </div>
+    </div>
+
+    </div><!-- /version-docs -->
 
     <!-- ==================== VERSION 2 (UPDATED) ==================== -->
     <div id="version-v2" class="version-content active">
